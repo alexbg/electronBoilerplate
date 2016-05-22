@@ -1,0 +1,35 @@
+{
+  "name": "random-messages",
+  "version": "0.0.1",
+  "description": "Send a message to someone who either you know or not",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/electron/electron-quick-start.git"
+  },
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial"
+  ],
+  "author": "alexbg <alexbgdev@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/electron/electron-quick-start/issues"
+  },
+  "homepage": "https://github.com/electron/electron-quick-start#readme",
+  "devDependencies": {
+    "material-ui": "^0.15.0",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0",
+    "react-router-redux": "^4.0.4",
+    "redux": "^3.5.2"
+  },
+  "dependencies": {
+    "react-tap-event-plugin": "^1.0.0"
+  }
+}
