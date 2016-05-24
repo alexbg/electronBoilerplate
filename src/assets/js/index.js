@@ -12,3 +12,4 @@ var Prueba = function(){
 ReactDOM.render(<Prueba />,document.getElementById('main'));
 
 console.log('weeeeeeeeeee');
+console.log('patoooooooo');

@@ -4,12 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "gulp clean",
     "start": "gulp",
     "postinstall": "install-app-deps",
     "pack": "build",
-    "dist": "build",
-    "test": "gulp clean"
+    "dist": "build"
   },
   "author": "",
   "license": "MIT",
@@ -23,23 +22,22 @@
     "browserify": "^13.0.1",
     "del": "^2.2.0",
     "electron-builder": "^3.25.0",
-    "electron-prebuilt": "^1.1.1",
+    "electron-prebuilt": "1.1.1",
     "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
     "gulp-concat": "^2.6.0",
     "gulp-flatten": "^0.2.0",
+    "gulp-less": "^3.1.0",
     "gulp-sass": "^2.3.1",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.5.3",
     "gulp-uglifycss": "^1.0.6",
     "gulp-util": "^3.0.7",
+    "merge-stream": "^1.0.0",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-paths": "^2.1.0",
     "vinyl-source-stream": "^1.1.0"
-  },
-  "dependencies": {
-    "reactuikit": "0.0.5"
   },
   "build": {
     "app-bundle-id": "your.id",
