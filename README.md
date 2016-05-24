@@ -15,6 +15,11 @@ To install all de dependencies, use this command
 npm install
 ```
 
+create a folder called src where will be the electron app
+```
+mkdir src
+```
+
 In the folder src, put your app.
 After use the next command to compile.
 

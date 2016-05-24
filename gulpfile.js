@@ -20,9 +20,28 @@ var merge = require('merge-stream');
 
 var fs = require("fs");
 
+// options
+
+var individualsJs = [
+  './src/bower_components/uikit/js/uikit.min.js',
+  './src/bower_components/jquery/dist/jquery.min.js',
+]
+
+var individualsCss = [
+
+]
+
+// Folder what will be remove after default task
+var folderToDelete = [
+  //'./app/node_modules',
+  //'./app/bower_components',
+  //'./app/assets'
+]
+
+
 gulp.task('default',['css','js','srcToApp'],function(){
 
-  del('./app/assets');
+  del(folderToDelete);
 
 });
 
@@ -31,17 +50,17 @@ gulp.task('default',['css','js','srcToApp'],function(){
 // compile and concat sass to css, less to css , css(only concat) and merge them
 var mergeCss = function(){
   var streamSass = gulp.src(['./src/assets/**/*.sass','./src/assets/sass/**/*.scss'])
-            .pipe(sass().on('error', sass.logError))
-            .pipe(flatten())
-            .pipe(concat('mainSass.css'));
+        .pipe(sass().on('error', sass.logError))
+        .pipe(flatten())
+        .pipe(concat('mainSass.css'));
 
   var streamLess = gulp.src('./src/assets/**/*.less')
-            .pipe(less())
-            .pipe(flatten())
-            .pipe(concat('mainLess.css'));
+        .pipe(less())
+        .pipe(flatten())
+        .pipe(concat('mainLess.css'));
 
   var streamCss = gulp.src('./src/assets/**/*.css')
-            .pipe(concat('mainCss.css'));
+        .pipe(concat('mainCss.css'));
 
   return merge(streamSass,streamLess,streamCss)
         .pipe(concat('main.css'))
@@ -53,13 +72,17 @@ var mergeCss = function(){
 
 var babelDevelopment = function(){
   var b = browserify({
-    entries: './src/assets/js/index.js',
+    entries: [
+      './src/bower_components/jquery/dist/jquery.min.js',
+      './src/index.js'
+    ],
     debug: true
   }).transform(babelify,{presets: ["stage-0","es2015", "react"]});
 
   return b.bundle()
     .pipe(source('app.js'))
     .pipe(buffer())
+    .on('error', gutil.log)
     //.pipe(sourcemaps.init({loadMaps: true}))
         // Add transformation tasks to the pipeline here.
         //.pipe(uglify())
@@ -68,9 +91,12 @@ var babelDevelopment = function(){
     .pipe(gulp.dest('./app/js/'));
 };
 
+// Babel when is in production
+// use uglify
 var babelProduction = function(){
+
   var b = browserify({
-    entries: './src/assets/js/index.js',
+    entries: './src/index.js',
     debug: true
   }).transform(babelify,{presets: ["stage-0","es2015", "react"]});
 
@@ -83,7 +109,27 @@ var babelProduction = function(){
         .on('error', gutil.log)
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest('./app/js/'));
+
 };
+
+// Use babel in individual javascript files
+// and copy them in app/js
+var indJs = function(){
+  if(process.env.NODE_ENV == 'production'){
+    return gulp.src(individualsJs)
+          .pipe(babel())
+          .pipe(flatten())
+          .pipe(uglify())
+          .on('error', gutil.log)
+          .pipe(gulp.dest('./app/js'))
+  }else{
+    return gulp.src(individualsJs)
+          .pipe(babel())
+          .pipe(flatten())
+          .pipe(gulp.dest('./app/js'))
+  }
+
+}
 
 // sass to css
 gulp.task('css',['clean'],function(){
@@ -97,6 +143,9 @@ gulp.task('js',['clean'],function(){
     babelProduction();
   }else{
     babelDevelopment();
+  }
+  if(individualsJs.length > 0){
+    indJs();
   }
   //babel();
 });
@@ -113,7 +162,12 @@ gulp.task('cleanCss',function(){
 
 // copy src to app directory
 gulp.task('srcToApp',['clean'],function(){
-  return gulp.src('./src/**/*.*')
+  return gulp.src([
+    '!./src/node_modules/**/*.*',
+    '!./src/bower_components/**/*.*',
+    '!./src/assets/**/*.*',
+    './src/**/*.*'
+  ])
   .pipe(gulp.dest('./app'))
 });
 
@@ -128,7 +182,14 @@ gulp.watch([
 });
 
 // watch javascript files
-gulp.watch('./src/assets/js/**/*.js',function(){
+gulp.watch('./src/**/*.js',function(){
   gutil.log(gutil.colors.magenta('watch'), gutil.colors.cyan('babel'));
-  babel();
+  if(process.env.NODE_ENV == 'production'){
+    babelProduction();
+  }else{
+    babelDevelopment();
+  }
+  if(individualsJs.length > 0){
+    indJs();
+  }
 });
